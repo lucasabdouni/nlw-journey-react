@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Button } from '../../components/button'
 import { api } from '../../lib/axios'
+import { ManageGuestsModal } from './manage-guest-modal'
 
-interface Participant {
+export interface Participant {
   id: string
   name: string | null
   email: string
@@ -14,6 +15,11 @@ interface Participant {
 export function Guests() {
   const { tripId } = useParams()
   const [participants, setParticipants] = useState<Participant[]>([])
+  const [isManageGuestsModalOpen, setIsManageGuestsModalOpen] = useState(false)
+
+  function changeManageGuestModal() {
+    setIsManageGuestsModalOpen(!isManageGuestsModalOpen)
+  }
 
   useEffect(() => {
     api
@@ -49,10 +55,17 @@ export function Guests() {
         })}
       </div>
 
-      <Button variant="secondary" size="full">
+      <Button onClick={changeManageGuestModal} variant="secondary" size="full">
         <UserCog className="size-5" />
         Gerenciar convidados
       </Button>
+
+      {isManageGuestsModalOpen && (
+        <ManageGuestsModal
+          changeGuestsModal={changeManageGuestModal}
+          emailToInvite={participants}
+        />
+      )}
     </div>
   )
 }
